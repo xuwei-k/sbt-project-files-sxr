@@ -34,6 +34,11 @@ object ProjectDefFiles{
       "akka",
       Seq("AkkaBuild.scala","Publish.scala","Unidoc.scala")
     )
+   ,ProjectDefFile(
+      "n8han",
+      "Unfiltered",
+      Seq("build.scala")
+    )
   )
 }
 
