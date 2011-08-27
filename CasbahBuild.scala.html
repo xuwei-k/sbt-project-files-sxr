@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8"?>
+			<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html;charset=utf-8" ></meta>
+        <title>CasbahBuild.scala</title>
+        <script type="text/javascript" src="jquery-all.js"></script>
+        <script type="text/javascript" src="linked.js"></script>
+        <link rel="stylesheet" type="text/css" href="style.css" title="Style"></link>
+    </head>
+    <body>
+        <pre>
+<span class="keyword">package</span> mongodb.casbah;
+<span class="keyword">import</span> sbt._
+<span class="keyword">import</span> Keys._
+
+<span class="keyword">object</span> <a title="object mongodb.casbah.CasbahBuild" id="9536">CasbahBuild</a> <span title="ScalaObject" class="keyword">extends</span> <span title="sbt.Build">Build</span> <span class="delimiter">{</span>
+  <span class="keyword">import</span> <a href="#9538" title="object mongodb.casbah.Dependencies">Dependencies</a>._
+  <span class="keyword">import</span> <a href="#9542" title="object mongodb.casbah.Resolvers">Resolvers</a>._
+  <span class="keyword">import</span> <a href="#9540" title="object mongodb.casbah.Publish">Publish</a>._
+
+  <span class="keyword">lazy</span> <span class="keyword">val</span> <a title="Seq[sbt.Project.Setting[_ &gt;: Seq[java.lang.String] with java.lang.String &lt;: java.lang.Object]]" id="128208">buildSettings</a> = <span title="(elems: sbt.Project.Setting[_ &gt;: Seq[String] with String &lt;: java.lang.Object]*)Seq[sbt.Project.Setting[_ &gt;: Seq[String] with String &lt;: java.lang.Object]]">Seq</span><span class="delimiter">(</span>
+    <span title="(value: =&gt; String)sbt.Project.Setting[String]">organization</span> := <span title="java.lang.String(&quot;com.mongodb.casbah&quot;)" class="string">&quot;com.mongodb.casbah&quot;</span>,
+    <span title="(value: =&gt; String)sbt.Project.Setting[String]">version</span>      := <span title="java.lang.String(&quot;2.2.0-SNAPSHOT&quot;)" class="string">&quot;2.2.0-SNAPSHOT&quot;</span>,
+    <span title="(value: =&gt; Seq[String])sbt.Project.Setting[Seq[String]]">crossScalaVersions</span> := <span title="(elems: java.lang.String*)Seq[java.lang.String]">Seq</span><span class="delimiter">(</span><span title="java.lang.String(&quot;2.9.0-1&quot;)" class="string">&quot;2.9.0-1&quot;</span>, <span title="java.lang.String(&quot;2.8.1&quot;)" class="string">&quot;2.8.1&quot;</span><span class="delimiter">)</span>
+  <span class="delimiter">)</span>
+
+  <span class="comment">/**
+   * Import some sample data for testing
+   */</span>
+  <span title="implicit sbt.ProcessExtra.stringToProcess : (command: String)sbt.ProcessBuilder" class="string">&quot;/usr/local/bin/mongoimport -d casbahIntegration -c yield_historical.in --drop ./casbah-core/src/test/resources/yield_historical_in.json&quot;</span> <span title="=&gt; Int">!</span>
+
+  <span title="implicit sbt.ProcessExtra.stringToProcess : (command: String)sbt.ProcessBuilder" class="string">&quot;/usr/local/bin/mongoimport -d casbahIntegration -c books --drop ./casbah-core/src/test/resources/bookstore.json&quot;</span> <span title="=&gt; Int">!</span> 
+
+
+  <span class="keyword">override</span> <span class="keyword">lazy</span> <span class="keyword">val</span> <a title="Seq[sbt.Project.Setting[_]]" id="128210">settings</a> = <span class="keyword">super</span>.<span title="(that: scala.collection.TraversableOnce[sbt.Project.Setting[_]])(implicit bf: scala.collection.generic.CanBuildFrom[Seq[sbt.Project.Setting[_]],sbt.Project.Setting[_],Seq[sbt.Project.Setting[_]]])Seq[sbt.Project.Setting[_]]">settings</span> <span title="scala.collection.generic.CanBuildFrom[scala.collection.Seq.Coll,sbt.Project.Setting[_],Seq[sbt.Project.Setting[_]]]">++</span> <a href="#128207" title="=&gt; Seq[sbt.Project.Setting[_ &gt;: Seq[java.lang.String] with java.lang.String &lt;: java.lang.Object]]">buildSettings</a>
+
+  <span class="keyword">lazy</span> <span class="keyword">val</span> <a title="Seq[sbt.Project.Setting[_]]" id="128212">baseSettings</a> = <span title="object sbt.Defaults">Defaults</span>.<span title="(that: scala.collection.TraversableOnce[sbt.Project.Setting[_]])(implicit bf: scala.collection.generic.CanBuildFrom[Seq[sbt.Project.Setting[_]],sbt.Project.Setting[_],Seq[sbt.Project.Setting[_]]])Seq[sbt.Project.Setting[_]]">defaultSettings</span> <span title="scala.collection.generic.CanBuildFrom[scala.collection.Seq.Coll,sbt.Project.Setting[_],Seq[sbt.Project.Setting[_]]]">++</span> <a href="#9540" title="object mongodb.casbah.Publish">Publish</a>.<a href="#128258" title="=&gt; Seq[sbt.Project.Setting[_ &gt;: sbt.Task[Seq[sbt.Credentials]] with Option[sbt.Resolver] &lt;: Product]]">settings</a> 
+
+  <span class="keyword">lazy</span> <span class="keyword">val</span> <a title="Seq[sbt.Project.Setting[_]]" id="128214">parentSettings</a> = <a href="#128211" title="(that: scala.collection.TraversableOnce[sbt.Project.Setting[_]])(implicit bf: scala.collection.generic.CanBuildFrom[Seq[sbt.Project.Setting[_]],sbt.Project.Setting[_],Seq[sbt.Project.Setting[_]]])Seq[sbt.Project.Setting[_]]">baseSettings</a> <span title="scala.collection.generic.CanBuildFrom[scala.collection.Seq.Coll,sbt.Project.Setting[_],Seq[sbt.Project.Setting[_]]]">++</span> <span title="(elems: sbt.Project.Setting[Boolean]*)Seq[sbt.Project.Setting[Boolean]]">Seq</span><span class="delimiter">(</span>
+    <span title="(value: =&gt; Boolean)sbt.Project.Setting[Boolean]">publishArtifact</span> := <span title="Boolean(false)" class="keyword">false</span>
+  <span class="delimiter">)</span>
+
+  <span class="keyword">lazy</span> <span class="keyword">val</span> <a title="Seq[sbt.Project.Setting[_]]" id="128216">defaultSettings</a> = <a href="#128211" title="(that: scala.collection.TraversableOnce[sbt.Project.Setting[_]])(implicit bf: scala.collection.generic.CanBuildFrom[Seq[sbt.Project.Setting[_]],sbt.Project.Setting[_],Seq[sbt.Project.Setting[_]]])Seq[sbt.Project.Setting[_]]">baseSettings</a> <span title="scala.collection.generic.CanBuildFrom[scala.collection.Seq.Coll,sbt.Project.Setting[_],Seq[sbt.Project.Setting[_]]]">++</span> <span title="(elems: sbt.Project.Setting[_ &gt;: sbt.Types.Id[Seq[sbt.TestFramework]] with Boolean with sbt.Types.Id[Seq[sbt.Resolver]] with sbt.Types.Id[Seq[sbt.ModuleID]]]*)Seq[sbt.Project.Setting[_ &gt;: sbt.Types.Id[Seq[sbt.TestFramework]] with Boolean with sbt.Types.Id[Seq[sbt.Resolver]] with sbt.Types.Id[Seq[sbt.ModuleID]]]]">Seq</span><span class="delimiter">(</span>
+    <span title="(values: =&gt; Seq[sbt.ModuleID])sbt.Project.Setting[sbt.Types.Id[Seq[sbt.ModuleID]]]">libraryDependencies</span> ++= <span title="(elems: sbt.ModuleID*)Seq[sbt.ModuleID]">Seq</span><span class="delimiter">(</span><a href="#128241" title="(scalaVer: sbt.SettingKey[String])sbt.ModuleID">scalatest</a><span class="delimiter">(</span><span title="=&gt; sbt.SettingKey[String]">scalaVersion</span><span class="delimiter">)</span>, <a href="#128237" title="=&gt; sbt.ModuleID">specs2</a>, <a href="#128239" title="(scalaVer: sbt.SettingKey[String])sbt.ModuleID">specs2ScalazCore</a><span class="delimiter">(</span><span title="=&gt; sbt.SettingKey[String]">scalaVersion</span><span class="delimiter">)</span>, <a href="#128235" title="=&gt; sbt.ModuleID">slf4j</a>, <a href="#128242" title="=&gt; sbt.ModuleID">slf4jJCL</a><span class="delimiter">)</span>,
+    <span title="(values: =&gt; Seq[sbt.Resolver])sbt.Project.Setting[sbt.Types.Id[Seq[sbt.Resolver]]]">resolvers</span> ++= <span title="(elems: sbt.MavenRepository*)Seq[sbt.MavenRepository]">Seq</span><span class="delimiter">(</span><a href="#128249" title="=&gt; sbt.MavenRepository">scalaToolsReleases</a>, <a href="#128247" title="=&gt; sbt.MavenRepository">scalaToolsSnapshots</a>, <a href="#128253" title="=&gt; sbt.MavenRepository">mavenOrgRepo</a><span class="delimiter">)</span>,
+    <span title="(value: =&gt; Boolean)sbt.Project.Setting[Boolean]">autoCompilerPlugins</span> := <span title="Boolean(true)" class="keyword">true</span>,
+    <span title="(c: sbt.ConfigKey)sbt.ScopedSetting[Boolean]">parallelExecution</span> <span title="(value: =&gt; Boolean)sbt.Project.Setting[Boolean]">in</span> <span title="implicit sbt.ConfigKey.configurationToKey : (c: sbt.Configuration)sbt.ConfigKey">Test</span> := <span title="Boolean(true)" class="keyword">true</span>,
+    <span title="(value: =&gt; sbt.TestFramework)sbt.Project.Setting[sbt.Types.Id[Seq[sbt.TestFramework]]]">testFrameworks</span> += <span title="object sbt.TestFrameworks">TestFrameworks</span>.<span title="=&gt; sbt.TestFramework">Specs2</span>
+  <span class="delimiter">)</span>
+
+  <span class="keyword">lazy</span> <span class="keyword">val</span> <a title="sbt.Project" id="128218">casbah</a> = <a title="() =&gt; Seq[sbt.ClasspathDep[sbt.ProjectReference]]" id="132218">Project</a><span title="(deps: sbt.ClasspathDep[sbt.ProjectReference]*)sbt.Project" class="delimiter">(</span>
+    id        = <a title="java.lang.String(&quot;casbah&quot;)" id="132212" class="string">&quot;casbah&quot;</a>,
+    base      = <span title="(s: String)sbt.package.File">file</span><a title="sbt.package.File" id="132213" class="delimiter">(</a><span title="java.lang.String(&quot;.&quot;)" class="string">&quot;.&quot;</span><span class="delimiter">)</span>,
+    settings  = <a href="#128213" title="() =&gt; Seq[sbt.Project.Setting[_]]" id="132214">parentSettings</a>,
+    aggregate = <span title="(elems: sbt.ProjectReference*)Seq[sbt.ProjectReference]">Seq</span><a title="() =&gt; Seq[sbt.ProjectReference]" id="132215" class="delimiter">(</a><a href="#128219" title="implicit sbt.Reference.projectToRef : (p: sbt.Project)sbt.ProjectReference">util</a>, <a href="#128221" title="implicit sbt.Reference.projectToRef : (p: sbt.Project)sbt.ProjectReference">commons</a>, <a href="#128223" title="implicit sbt.Reference.projectToRef : (p: sbt.Project)sbt.ProjectReference">core</a>, <a href="#128225" title="implicit sbt.Reference.projectToRef : (p: sbt.Project)sbt.ProjectReference">query</a>, <a href="#128227" title="implicit sbt.Reference.projectToRef : (p: sbt.Project)sbt.ProjectReference">gridfs</a><span class="delimiter">)</span>
+  <span class="delimiter">)</span> dependsOn<span class="delimiter">(</span><a href="#128219" title="(p: sbt.Project)(implicit evidence$2: (sbt.Project) =&gt; sbt.ProjectReference)sbt.ClasspathDependency">util</a>, <a href="#128221" title="(p: sbt.Project)(implicit evidence$2: (sbt.Project) =&gt; sbt.ProjectReference)sbt.ClasspathDependency">commons</a>, <a href="#128223" title="(p: sbt.Project)(implicit evidence$2: (sbt.Project) =&gt; sbt.ProjectReference)sbt.ClasspathDependency">core</a>, <a href="#128225" title="(p: sbt.Project)(implicit evidence$2: (sbt.Project) =&gt; sbt.ProjectReference)sbt.ClasspathDependency">query</a>, <a href="#128227" title="(p: sbt.Project)(implicit evidence$2: (sbt.Project) =&gt; sbt.ProjectReference)sbt.ClasspathDependency">gridfs</a><span class="delimiter">)</span>
+
+  <span class="keyword">lazy</span> <span class="keyword">val</span> <a title="sbt.Project" id="128220">util</a> = <a title="() =&gt; Seq[sbt.ProjectReference]" id="131355">Project</a><span class="delimiter">(</span>
+    id       = <a title="java.lang.String(&quot;casbah-util&quot;)" id="131349" class="string">&quot;casbah-util&quot;</a>,
+    base     = <span title="(s: String)sbt.package.File">file</span><a title="sbt.package.File" id="131350" class="delimiter">(</a><span title="java.lang.String(&quot;casbah-util&quot;)" class="string">&quot;casbah-util&quot;</span><span class="delimiter">)</span>,
+    settings = <a href="#128215" title="(that: scala.collection.TraversableOnce[sbt.Project.Setting[_]])(implicit bf: scala.collection.generic.CanBuildFrom[Seq[sbt.Project.Setting[_]],sbt.Project.Setting[_],Seq[sbt.Project.Setting[_]]])Seq[sbt.Project.Setting[_]]">defaultSettings</a> <a title="() =&gt; Seq[sbt.Project.Setting[_]]" id="131351">++</a> <span title="(elems: sbt.Project.Setting[sbt.Types.Id[Seq[sbt.ModuleID]]]*)Seq[sbt.Project.Setting[sbt.Types.Id[Seq[sbt.ModuleID]]]]">Seq</span><span class="delimiter">(</span>
+      <span title="(values: =&gt; Seq[sbt.ModuleID])sbt.Project.Setting[sbt.Types.Id[Seq[sbt.ModuleID]]]">libraryDependencies</span> ++= <span title="(elems: sbt.ModuleID*)Seq[sbt.ModuleID]">Seq</span><span class="delimiter">(</span><a href="#128231" title="=&gt; sbt.ModuleID">mongoJavaDriver</a>, <a href="#128233" title="=&gt; sbt.ModuleID">scalajCollection</a>, <a href="#128235" title="=&gt; sbt.ModuleID">slf4j</a>, <a href="#128242" title="=&gt; sbt.ModuleID">slf4jJCL</a>, <a href="#128244" title="=&gt; sbt.ModuleID">scalaTime</a><span class="delimiter">)</span>
+    <span class="delimiter">)</span>
+  <span class="delimiter">)</span>
+
+  <span class="keyword">lazy</span> <span class="keyword">val</span> <a title="sbt.Project" id="128222">commons</a> = <a title="() =&gt; Seq[sbt.ProjectReference]" id="131563">Project</a><span title="(deps: sbt.ClasspathDep[sbt.ProjectReference]*)sbt.Project" class="delimiter">(</span>
+    id       = <a title="java.lang.String(&quot;casbah-commons&quot;)" id="131557" class="string">&quot;casbah-commons&quot;</a>,
+    base     = <span title="(s: String)sbt.package.File">file</span><a title="sbt.package.File" id="131558" class="delimiter">(</a><span title="java.lang.String(&quot;casbah-commons&quot;)" class="string">&quot;casbah-commons&quot;</span><span class="delimiter">)</span>,
+    settings = <a href="#128215" title="(that: scala.collection.TraversableOnce[sbt.Project.Setting[_]])(implicit bf: scala.collection.generic.CanBuildFrom[Seq[sbt.Project.Setting[_]],sbt.Project.Setting[_],Seq[sbt.Project.Setting[_]]])Seq[sbt.Project.Setting[_]]">defaultSettings</a> <a title="() =&gt; Seq[sbt.Project.Setting[_]]" id="131559">++</a> <span title="(elems: sbt.Project.Setting[sbt.Types.Id[Seq[sbt.ModuleID]]]*)Seq[sbt.Project.Setting[sbt.Types.Id[Seq[sbt.ModuleID]]]]">Seq</span><span class="delimiter">(</span>
+      <span title="(values: =&gt; Seq[sbt.ModuleID])sbt.Project.Setting[sbt.Types.Id[Seq[sbt.ModuleID]]]">libraryDependencies</span> ++= <span title="(elems: sbt.ModuleID*)Seq[sbt.ModuleID]">Seq</span><span class="delimiter">(</span><a href="#128231" title="=&gt; sbt.ModuleID">mongoJavaDriver</a>, <a href="#128233" title="=&gt; sbt.ModuleID">scalajCollection</a>, <a href="#128235" title="=&gt; sbt.ModuleID">slf4j</a>, <a href="#128242" title="=&gt; sbt.ModuleID">slf4jJCL</a>, <a href="#128244" title="=&gt; sbt.ModuleID">scalaTime</a><span class="delimiter">)</span>
+    <span class="delimiter">)</span>
+  <span class="delimiter">)</span> dependsOn<span class="delimiter">(</span><a href="#128219" title="(p: sbt.Project)(implicit evidence$2: (sbt.Project) =&gt; sbt.ProjectReference)sbt.ClasspathDependency">util</a><span class="delimiter">)</span>
+
+  <span class="keyword">lazy</span> <span class="keyword">val</span> <a title="sbt.Project" id="128224">core</a> = <a title="() =&gt; Seq[sbt.ProjectReference]" id="131722">Project</a><span title="(deps: sbt.ClasspathDep[sbt.ProjectReference]*)sbt.Project" class="delimiter">(</span>
+    id       = <a title="java.lang.String(&quot;casbah-core&quot;)" id="131716" class="string">&quot;casbah-core&quot;</a>,
+    base     = <span title="(s: String)sbt.package.File">file</span><a title="sbt.package.File" id="131717" class="delimiter">(</a><span title="java.lang.String(&quot;casbah-core&quot;)" class="string">&quot;casbah-core&quot;</span><span class="delimiter">)</span>,
+    settings = <a href="#128215" title="() =&gt; Seq[sbt.Project.Setting[_]]" id="131718">defaultSettings</a> 
+  <span class="delimiter">)</span> dependsOn<span class="delimiter">(</span><a href="#128221" title="(p: sbt.Project)(implicit evidence$2: (sbt.Project) =&gt; sbt.ProjectReference)sbt.ClasspathDependency">commons</a>, <a href="#128225" title="(p: sbt.Project)(implicit evidence$2: (sbt.Project) =&gt; sbt.ProjectReference)sbt.ClasspathDependency">query</a><span class="delimiter">)</span>
+
+  <span class="keyword">lazy</span> <span class="keyword">val</span> <a title="sbt.Project" id="128226">query</a> = <a title="() =&gt; Seq[sbt.ProjectReference]" id="131816">Project</a><span title="(deps: sbt.ClasspathDep[sbt.ProjectReference]*)sbt.Project" class="delimiter">(</span>
+    id       = <a title="java.lang.String(&quot;casbah-query&quot;)" id="131810" class="string">&quot;casbah-query&quot;</a>,
+    base     = <span title="(s: String)sbt.package.File">file</span><a title="sbt.package.File" id="131811" class="delimiter">(</a><span title="java.lang.String(&quot;casbah-query&quot;)" class="string">&quot;casbah-query&quot;</span><span class="delimiter">)</span>,
+    settings = <a href="#128215" title="() =&gt; Seq[sbt.Project.Setting[_]]" id="131812">defaultSettings</a> 
+  <span class="delimiter">)</span> dependsOn<span class="delimiter">(</span><a href="#128221" title="(p: sbt.Project)(implicit evidence$2: (sbt.Project) =&gt; sbt.ProjectReference)sbt.ClasspathDependency">commons</a><span class="delimiter">)</span>
+
+  <span class="keyword">lazy</span> <span class="keyword">val</span> <a title="sbt.Project" id="128228">gridfs</a> = <a title="() =&gt; Seq[sbt.ProjectReference]" id="132076">Project</a><span title="(deps: sbt.ClasspathDep[sbt.ProjectReference]*)sbt.Project" class="delimiter">(</span>
+    id       = <a title="java.lang.String(&quot;casbah-gridfs&quot;)" id="132070" class="string">&quot;casbah-gridfs&quot;</a>,
+    base     = <span title="(s: String)sbt.package.File">file</span><a title="sbt.package.File" id="132071" class="delimiter">(</a><span title="java.lang.String(&quot;casbah-gridfs&quot;)" class="string">&quot;casbah-gridfs&quot;</span><span class="delimiter">)</span>,
+    settings = <a href="#128215" title="() =&gt; Seq[sbt.Project.Setting[_]]" id="132072">defaultSettings</a> 
+  <span class="delimiter">)</span> dependsOn<span class="delimiter">(</span><a href="#128223" title="(p: sbt.Project)(implicit evidence$2: (sbt.Project) =&gt; sbt.ProjectReference)sbt.ClasspathDependency">core</a><span class="delimiter">)</span>
+  
+<span class="delimiter">}</span>
+
+<span class="keyword">object</span> <a title="object mongodb.casbah.Dependencies" id="9538">Dependencies</a> <span title="ScalaObject" class="delimiter">{</span>
+  <span class="comment">// TODO - Fix maven artifact</span>
+
+  <span class="comment">//val bson = &quot;org.mongodb&quot; % &quot;bson&quot; % &quot;2.5.3&quot;</span>
+
+  <span class="keyword">val</span> <a title="sbt.ModuleID" id="128231">mongoJavaDriver</a>  = <span title="(artifactID: String)sbt.impl.GroupArtifactID" class="string">&quot;org.mongodb&quot;</span> <span title="(revision: String)sbt.ModuleID">%</span> <span title="java.lang.String(&quot;mongo-java-driver&quot;)" class="string">&quot;mongo-java-driver&quot;</span> % <span title="java.lang.String(&quot;2.6.5&quot;)" class="string">&quot;2.6.5&quot;</span>
+  <span class="keyword">val</span> <a title="sbt.ModuleID" id="128233">scalajCollection</a> = <span title="(artifactID: String)sbt.impl.GroupArtifactID" class="string">&quot;org.scalaj&quot;</span> <span title="(revision: String)sbt.ModuleID">%%</span> <span title="java.lang.String(&quot;scalaj-collection&quot;)" class="string">&quot;scalaj-collection&quot;</span> % <span title="java.lang.String(&quot;1.1&quot;)" class="string">&quot;1.1&quot;</span>
+  <span class="keyword">val</span> <a title="sbt.ModuleID" id="128235">slf4j</a>            = <span title="(artifactID: String)sbt.impl.GroupArtifactID" class="string">&quot;org.slf4j&quot;</span> <span title="(revision: String)sbt.ModuleID">%</span> <span title="java.lang.String(&quot;slf4j-api&quot;)" class="string">&quot;slf4j-api&quot;</span> % <span title="java.lang.String(&quot;1.6.0&quot;)" class="string">&quot;1.6.0&quot;</span>
+
+  <span class="keyword">val</span> <a title="sbt.ModuleID" id="128237">specs2</a> = <span title="(artifactID: String)sbt.impl.GroupArtifactID" class="string">&quot;org.specs2&quot;</span> <span title="(revision: String)sbt.ModuleID">%%</span> <span title="java.lang.String(&quot;specs2&quot;)" class="string">&quot;specs2&quot;</span> <span title="(configurations: String)sbt.ModuleID">%</span> <span title="java.lang.String(&quot;1.5&quot;)" class="string">&quot;1.5&quot;</span> % <span title="java.lang.String(&quot;provided&quot;)" class="string">&quot;provided&quot;</span> 
+  <span class="comment">//val specs2 = specs2Compile % &quot;test&quot;</span>
+
+  <span class="keyword">def</span> <a title="(scalaVer: sbt.SettingKey[String])sbt.ModuleID" id="128239">specs2ScalazCore</a><span class="delimiter">(</span><a title="sbt.SettingKey[String]" id="129747">scalaVer</a>: <span title="sbt.SettingKey[String]">sbt</span>.SettingKey<span class="delimiter">[</span>String<span class="delimiter">]</span><span class="delimiter">)</span> = 
+    <a href="#128240" title="(scalaVer: sbt.SettingKey[String])String">scalaVersionString</a><span class="delimiter">(</span><a href="#129747" title="sbt.SettingKey[String]">scalaVer</a><span class="delimiter">)</span> <span title="sbt.ModuleID" class="keyword">match</span> <span class="delimiter">{</span>
+      <span title="sbt.ModuleID" class="keyword">case</span> <span title="java.lang.String(&quot;2.8.1&quot;)" class="string">&quot;2.8.1&quot;</span> =&gt; <span title="(artifactID: String)sbt.impl.GroupArtifactID" class="string">&quot;org.specs2&quot;</span> <span title="(revision: String)sbt.ModuleID">%%</span> <span title="java.lang.String(&quot;specs2-scalaz-core&quot;)" class="string">&quot;specs2-scalaz-core&quot;</span> <span title="(configurations: String)sbt.ModuleID">%</span> <span title="java.lang.String(&quot;5.1-SNAPSHOT&quot;)" class="string">&quot;5.1-SNAPSHOT&quot;</span> % <span title="java.lang.String(&quot;test&quot;)" class="string">&quot;test&quot;</span>
+      <span title="sbt.ModuleID" class="keyword">case</span> _ =&gt; <span title="(artifactID: String)sbt.impl.GroupArtifactID" class="string">&quot;org.specs2&quot;</span> <span title="(revision: String)sbt.ModuleID">%%</span> <span title="java.lang.String(&quot;specs2-scalaz-core&quot;)" class="string">&quot;specs2-scalaz-core&quot;</span> <span title="(configurations: String)sbt.ModuleID">%</span> <span title="java.lang.String(&quot;6.0.RC2&quot;)" class="string">&quot;6.0.RC2&quot;</span> % <span title="java.lang.String(&quot;test&quot;)" class="string">&quot;test&quot;</span>
+    <span class="delimiter">}</span>
+
+  <span class="keyword">def</span> <a title="(scalaVer: sbt.SettingKey[String])String" id="128240">scalaVersionString</a><span class="delimiter">(</span><a title="sbt.SettingKey[String]" id="129446">scalaVer</a>: <span title="sbt.SettingKey[String]">sbt</span>.SettingKey<span class="delimiter">[</span>String<span class="delimiter">]</span><span class="delimiter">)</span>: <span title="String">String</span> = <span class="delimiter">{</span>
+    <span class="keyword">var</span> <a title="java.lang.String" id="132667">result</a> = <span title="java.lang.String(&quot;&quot;)" class="string">&quot;&quot;</span>
+    <a href="#129446" title="(f: (String) =&gt; Unit)sbt.Project.Initialize[Unit]">scalaVer</a> <span class="delimiter">{</span> <a title="String" id="132803">sv</a> =&gt; <a href="#132667" title="java.lang.String">result</a> = <a href="#132803" title="String">sv</a> <span class="delimiter">}</span>
+    <span title="Unit" class="keyword">if</span> <span class="delimiter">(</span><a href="#132667" title="(x$1: AnyRef)Boolean">result</a> == <span title="java.lang.String(&quot;&quot;)" class="string">&quot;&quot;</span><span class="delimiter">)</span> <a href="#132667" title="java.lang.String">result</a> = <span title="java.lang.String(&quot;2.8.1&quot;)" class="string">&quot;2.8.1&quot;</span>
+    <a href="#132667" title="java.lang.String">result</a>
+  <span class="delimiter">}</span>
+
+  <span class="comment">/*def scalatest(scalaVer: sbt.SettingKey[String]) =
+    scalaVersionString(scalaVer) match {
+      case &quot;2.8.1&quot; =&gt; &quot;org.scalatest&quot; % &quot;scalatest_2.8.1&quot; % &quot;1.5.1&quot; % &quot;test&quot;
+      case _ =&gt; &quot;org.scalatest&quot; % &quot;scalatest_2.9.0&quot; % &quot;1.6.1&quot; % &quot;test&quot;
+    }*/</span>
+
+  <span class="keyword">def</span> <a title="(scalaVer: sbt.SettingKey[String])sbt.ModuleID" id="128241">scalatest</a><span class="delimiter">(</span><a title="sbt.SettingKey[String]" id="129443">scalaVer</a>: <span title="sbt.SettingKey[String]">sbt</span>.SettingKey<span class="delimiter">[</span>String<span class="delimiter">]</span><span class="delimiter">)</span> =
+    <a href="#128240" title="(scalaVer: sbt.SettingKey[String])String">scalaVersionString</a><span class="delimiter">(</span><a href="#129443" title="sbt.SettingKey[String]">scalaVer</a><span class="delimiter">)</span> <span title="sbt.ModuleID" class="keyword">match</span> <span class="delimiter">{</span>
+      <span title="sbt.ModuleID" class="keyword">case</span> <span title="java.lang.String(&quot;2.8.1&quot;)" class="string">&quot;2.8.1&quot;</span> =&gt; <span title="(artifactID: String)sbt.impl.GroupArtifactID" class="string">&quot;org.scalatest&quot;</span> <span title="(revision: String)sbt.ModuleID">%</span> <span title="java.lang.String(&quot;scalatest_2.8.1&quot;)" class="string">&quot;scalatest_2.8.1&quot;</span> <span title="(configurations: String)sbt.ModuleID">%</span> <span title="java.lang.String(&quot;1.5.1&quot;)" class="string">&quot;1.5.1&quot;</span> % <span title="java.lang.String(&quot;provided&quot;)" class="string">&quot;provided&quot;</span>
+      <span title="sbt.ModuleID" class="keyword">case</span> _ =&gt; <span title="(artifactID: String)sbt.impl.GroupArtifactID" class="string">&quot;org.scalatest&quot;</span> <span title="(revision: String)sbt.ModuleID">%</span> <span title="java.lang.String(&quot;scalatest_2.9.0&quot;)" class="string">&quot;scalatest_2.9.0&quot;</span> <span title="(configurations: String)sbt.ModuleID">%</span> <span title="java.lang.String(&quot;1.6.1&quot;)" class="string">&quot;1.6.1&quot;</span> % <span title="java.lang.String(&quot;provided&quot;)" class="string">&quot;provided&quot;</span>
+    <span class="delimiter">}</span>
+
+  <span class="comment">// JCL bindings for testing only</span>
+  <span class="keyword">val</span> <a title="sbt.ModuleID" id="128242">slf4jJCL</a>         = <span title="(artifactID: String)sbt.impl.GroupArtifactID" class="string">&quot;org.slf4j&quot;</span> <span title="(revision: String)sbt.ModuleID">%</span> <span title="java.lang.String(&quot;slf4j-jcl&quot;)" class="string">&quot;slf4j-jcl&quot;</span> <span title="(configurations: String)sbt.ModuleID">%</span> <span title="java.lang.String(&quot;1.6.0&quot;)" class="string">&quot;1.6.0&quot;</span> % <span title="java.lang.String(&quot;test&quot;)" class="string">&quot;test&quot;</span>
+  <span class="keyword">val</span> <a title="sbt.ModuleID" id="128244">scalaTime</a>        = <span title="(artifactID: String)sbt.impl.GroupArtifactID" class="string">&quot;org.scala-tools.time&quot;</span> <span title="(revision: String)sbt.ModuleID">%</span> <span title="java.lang.String(&quot;time_2.8.0&quot;)" class="string">&quot;time_2.8.0&quot;</span> % <span title="java.lang.String(&quot;0.2&quot;)" class="string">&quot;0.2&quot;</span>
+
+<span class="delimiter">}</span>
+
+<span class="keyword">object</span> <a title="object mongodb.casbah.Publish" id="9540">Publish</a> <span title="ScalaObject" class="delimiter">{</span>
+  <span class="keyword">lazy</span> <span class="keyword">val</span> <a title="Seq[sbt.Project.Setting[_ &gt;: sbt.Task[Seq[sbt.Credentials]] with Option[sbt.Resolver] &lt;: Product]]" id="128259">settings</a> = <span title="(elems: sbt.Project.Setting[_ &gt;: sbt.Task[Seq[sbt.Credentials]] with Option[sbt.Resolver] &lt;: Product]*)Seq[sbt.Project.Setting[_ &gt;: sbt.Task[Seq[sbt.Credentials]] with Option[sbt.Resolver] &lt;: Product]]">Seq</span><span class="delimiter">(</span>
+    <span title="(app: sbt.Project.Initialize[Option[sbt.Resolver]])sbt.Project.Setting[Option[sbt.Resolver]]">publishTo</span> &lt;&lt;= <span title="(f: (String) =&gt; Option[sbt.Resolver])sbt.Project.Initialize[Option[sbt.Resolver]]">version</span><span class="delimiter">(</span><a title="String" id="128842">v</a> =&gt; <span title="(x: sbt.MavenRepository)Some[sbt.MavenRepository]">Some</span><span class="delimiter">(</span><a href="#128260" title="(version: String)sbt.MavenRepository">publishTarget</a><span class="delimiter">(</span><a href="#128842" title="String">v</a><span class="delimiter">)</span><span class="delimiter">)</span><span class="delimiter">)</span>,
+    <span title="(value: =&gt; sbt.Credentials)sbt.Project.Setting[sbt.Task[Seq[sbt.Credentials]]]">credentials</span> += <span title="(file: java.io.File)sbt.Credentials">Credentials</span><span class="delimiter">(</span><span title="object sbt.Path">Path</span>.<span title="(component: String)java.io.File">userHome</span> <span title="(component: String)java.io.File">/</span> <span title="java.lang.String(&quot;.ivy2&quot;)" class="string">&quot;.ivy2&quot;</span> / <span title="java.lang.String(&quot;.scalatools_credentials&quot;)" class="string">&quot;.scalatools_credentials&quot;</span><span class="delimiter">)</span>
+  <span class="delimiter">)</span>
+
+  <span class="keyword">private</span> <span class="keyword">def</span> <a title="(version: String)sbt.MavenRepository" id="128260">publishTarget</a><span class="delimiter">(</span><a title="String" id="128845">version</a>: <span title="String">String</span><span class="delimiter">)</span> = <span title="(location: String)sbt.MavenRepository" class="string">&quot;Scala Tools Nexus&quot;</span> at <span title="implicit scala.Predef.augmentString : (x: String)scala.collection.immutable.StringOps" class="string">&quot;http://nexus.scala-tools.org/content/repositories/%s/&quot;</span>.<span title="(args: Any*)String">format</span><span class="delimiter">(</span>
+    <span title="Any" class="keyword">if</span> <span class="delimiter">(</span><a href="#128845" title="String">version</a>.<span title="(x$1: java.lang.String)Boolean">endsWith</span><span class="delimiter">(</span><span title="java.lang.String(&quot;-SNAPSHOT&quot;)" class="string">&quot;-SNAPSHOT&quot;</span><span class="delimiter">)</span><span class="delimiter">)</span>
+      <span title="java.lang.String(&quot;snapshots&quot;)" class="string">&quot;snapshots&quot;</span>
+    <span class="keyword">else</span>
+      <span title="java.lang.String(&quot;releases&quot;)" class="string">&quot;releases&quot;</span>
+  <span class="delimiter">)</span>
+     <span class="comment">/*override def documentOptions = Seq(
+      CompoundDocOption(&quot;-doc-source-url&quot;, &quot;http://api.mongodb.org/scala/casbah-%s/%s/sxr/€{FILE_PATH}&quot;.format(projectVersion.value, projectName.value)),
+      CompoundDocOption(&quot;-doc-version&quot;, &quot;v%s&quot;.format(projectVersion.value)),
+      CompoundDocOption(&quot;-doc-title&quot;, &quot;Casbah %s&quot;.format(projectName.value))
+    )*/</span>
+<span class="delimiter">}</span>
+
+<span class="keyword">object</span> <a title="object mongodb.casbah.Resolvers" id="9542">Resolvers</a> <span title="ScalaObject" class="delimiter">{</span>
+  <span class="keyword">val</span> <a title="sbt.MavenRepository" id="128247">scalaToolsSnapshots</a> = <span title="(location: String)sbt.MavenRepository" class="string">&quot;snapshots&quot;</span> at <span title="java.lang.String(&quot;http://scala-tools.org/repo-snapshots&quot;)" class="string">&quot;http://scala-tools.org/repo-snapshots&quot;</span>
+  <span class="keyword">val</span> <a title="sbt.MavenRepository" id="128249">scalaToolsReleases</a>  = <span title="(location: String)sbt.MavenRepository" class="string">&quot;releases&quot;</span> at <span title="java.lang.String(&quot;http://scala-tools.org/repo-releases&quot;)" class="string">&quot;http://scala-tools.org/repo-releases&quot;</span>
+
+  <span class="keyword">val</span> <a title="sbt.MavenRepository" id="128251">jbossRepo</a> = <span title="(location: String)sbt.MavenRepository" class="string">&quot;JBoss Public Repo&quot;</span> at <span title="java.lang.String(&quot;https://repository.jboss.org/nexus/content/groups/public-jboss/&quot;)" class="string">&quot;https://repository.jboss.org/nexus/content/groups/public-jboss/&quot;</span>
+  <span class="keyword">val</span> <a title="sbt.MavenRepository" id="128253">mavenOrgRepo</a> = <span title="(location: String)sbt.MavenRepository" class="string">&quot;Maven.Org Repository&quot;</span> at <span title="java.lang.String(&quot;http://repo1.maven.org/maven2/org/&quot;)" class="string">&quot;http://repo1.maven.org/maven2/org/&quot;</span>
+  <span class="keyword">val</span> <a title="sbt.MavenRepository" id="128255">twttrRepo</a> = <span title="(location: String)sbt.MavenRepository" class="string">&quot;Twitter Public Repo&quot;</span> at <span title="java.lang.String(&quot;http://maven.twttr.com&quot;)" class="string">&quot;http://maven.twttr.com&quot;</span>
+<span class="delimiter">}</span>
+
+
+        </pre>
+    </body>
+</html>

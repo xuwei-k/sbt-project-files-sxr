@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+			<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html;charset=utf-8" ></meta>
+        <title>Status.scala</title>
+        <script type="text/javascript" src="jquery-all.js"></script>
+        <script type="text/javascript" src="linked.js"></script>
+        <link rel="stylesheet" type="text/css" href="style.css" title="Style"></link>
+    </head>
+    <body>
+        <pre>
+<span class="keyword">package</span> harrah.xsbt;
+	<span class="keyword">import</span> sbt._
+	<span class="keyword">import</span> Keys._
+
+<span class="keyword">object</span> <a title="object harrah.xsbt.Status" id="9468">Status</a>
+<span title="ScalaObject" class="delimiter">{</span>
+	<span class="keyword">lazy</span> <span class="keyword">val</span> <a title="sbt.SettingKey[Boolean]" id="39839">isSnapshot</a> = <span title="[T](label: String,description: String)(implicit evidence$5: Manifest[T])sbt.SettingKey[T]">SettingKey</span><span title="(label: String,description: String)(implicit evidence$5: Manifest[Boolean])sbt.SettingKey[Boolean]" class="delimiter">[</span><span title="Boolean">Boolean</span><span class="delimiter">]</span><span title="=&gt; scala.reflect.AnyValManifest[Boolean]" class="delimiter">(</span><span title="java.lang.String(&quot;is-snapshot&quot;)" class="string">&quot;is-snapshot&quot;</span><span class="delimiter">)</span>
+	<span class="keyword">lazy</span> <span class="keyword">val</span> <a title="sbt.SettingKey[String]" id="39841">publishStatus</a> = <span title="[T](label: String,description: String)(implicit evidence$5: Manifest[T])sbt.SettingKey[T]">SettingKey</span><span title="(label: String,description: String)(implicit evidence$5: Manifest[String])sbt.SettingKey[String]" class="delimiter">[</span><span title="String">String</span><span class="delimiter">]</span><span title="(clazz: Class[_])scala.reflect.Manifest[String]" class="delimiter">(</span><span title="java.lang.String(&quot;publish-status&quot;)" class="string">&quot;publish-status&quot;</span><span class="delimiter">)</span>
+
+	<span class="keyword">def</span> <a title="=&gt; Seq[sbt.package.Setting[_]]" id="39842">settings</a>: <span title="Seq[sbt.package.Setting[_]]">Seq</span><span class="delimiter">[</span>Setting<span class="delimiter">[</span>_<span class="delimiter">]</span><span class="delimiter">]</span> = <span title="(elems: sbt.Project.Setting[_ &gt;: sbt.Types.Id[Seq[sbt.Command]] with String with Boolean]*)Seq[sbt.Project.Setting[_ &gt;: sbt.Types.Id[Seq[sbt.Command]] with String with Boolean]]">Seq</span><span class="delimiter">(</span>
+		<a href="#39838" title="(app: sbt.Project.Initialize[Boolean])sbt.Project.Setting[Boolean]">isSnapshot</a> &lt;&lt;= <span title="(f: (String) =&gt; Boolean)sbt.Project.Initialize[Boolean]">version</span><span class="delimiter">(</span><a href="#88306" title="(x$1: java.lang.CharSequence)Boolean">_</a> contains <span title="java.lang.String(&quot;-&quot;)" class="string">&quot;-&quot;</span><span class="delimiter">)</span>,
+		<a href="#39840" title="(app: sbt.Project.Initialize[String])sbt.Project.Setting[String]">publishStatus</a> &lt;&lt;= <a href="#39838" title="(f: (Boolean) =&gt; String)sbt.Project.Initialize[String]">isSnapshot</a> <span class="delimiter">{</span> <a title="Boolean" id="88515">snap</a> =&gt; <span title="String" class="keyword">if</span><span class="delimiter">(</span><a href="#88515" title="Boolean">snap</a><span class="delimiter">)</span> <span title="java.lang.String(&quot;snapshots&quot;)" class="string">&quot;snapshots&quot;</span> <span class="keyword">else</span> <span title="java.lang.String(&quot;releases&quot;)" class="string">&quot;releases&quot;</span> <span class="delimiter">}</span>,
+		<span title="(value: =&gt; sbt.Command)sbt.Project.Setting[sbt.Types.Id[Seq[sbt.Command]]]">commands</span> += <a href="#39843" title="=&gt; sbt.Command">stampVersion</a>
+	<span class="delimiter">)</span>
+	<span class="keyword">def</span> <a title="=&gt; sbt.Command" id="39843">stampVersion</a> = <span title="object sbt.Command">Command</span>.<span title="(name: String)(f: (sbt.State) =&gt; sbt.State)sbt.Command">command</span><span class="delimiter">(</span><span title="java.lang.String(&quot;stamp-version&quot;)" class="string">&quot;stamp-version&quot;</span><span class="delimiter">)</span> <span class="delimiter">{</span> <a title="sbt.State" id="88733">state</a> =&gt;
+		<span title="object sbt.Project">Project</span>.<span title="(state: sbt.State)sbt.Extracted">extract</span><span class="delimiter">(</span><a href="#88733" title="sbt.State">state</a><span class="delimiter">)</span>.<span title="(settings: Seq[sbt.Project.Setting[_]],state: sbt.State)sbt.State">append</span><span class="delimiter">(</span><span class="delimiter">(</span><span title="(p: sbt.Reference)sbt.ScopedSetting[String]">version</span> <span title="(f: (String) =&gt; String)sbt.Project.Setting[String]">in</span> <span title="object sbt.ThisBuild">ThisBuild</span> ~= <a href="#39844" title="(v: String)String">stamp</a><span class="delimiter">)</span> <a href="#88737" title="sbt.Project.Setting[String]">::</a> <span title="(x: sbt.Project.Setting[String])List[sbt.Project.Setting[String]]">Nil</span>, <a href="#88733" title="sbt.State">state</a><span class="delimiter">)</span>
+	<span class="delimiter">}</span>
+	<span class="keyword">def</span> <a title="(v: String)String" id="39844">stamp</a><span class="delimiter">(</span><a title="String" id="88900">v</a>: <span title="String">String</span><span class="delimiter">)</span>: <span title="String">String</span> =
+		<span title="String" class="keyword">if</span><span class="delimiter">(</span><a href="#88900" title="(x$1: java.lang.String)Boolean">v</a> endsWith <a href="#39846" title="=&gt; java.lang.String(&quot;-SNAPSHOT&quot;)">Snapshot</a><span class="delimiter">)</span>
+			<span title="(x$1: Any)java.lang.String" class="delimiter">(</span><a href="#88900" title="(suffix: String)java.lang.String">v</a> stripSuffix <a href="#39846" title="=&gt; java.lang.String(&quot;-SNAPSHOT&quot;)">Snapshot</a><span class="delimiter">)</span> <span title="(x$1: Any)java.lang.String">+</span> <span title="java.lang.String(&quot;-&quot;)" class="string">&quot;-&quot;</span> + <a href="#39845" title="(time: Long)String">timestampString</a><span class="delimiter">(</span><span title="object java.lang.System">System</span>.<span title="()Long">currentTimeMillis</span><span class="delimiter">)</span>
+		<span class="keyword">else</span>
+			<a href="#88900" title="String">v</a>
+	<span class="keyword">def</span> <a title="(time: Long)String" id="39845">timestampString</a><span class="delimiter">(</span><a title="Long" id="89004">time</a>: <span title="Long">Long</span><span class="delimiter">)</span>: <span title="String">String</span> =
+	<span class="delimiter">{</span>
+		<span class="keyword">val</span> <a title="java.text.SimpleDateFormat" id="89189">format</a> = <span title="(x$1: java.lang.String)java.text.SimpleDateFormat" class="keyword">new</span> java.text.<span title="java.text.SimpleDateFormat">SimpleDateFormat</span><span class="delimiter">(</span><span title="java.lang.String(&quot;yyyyMMdd-HHmmss&quot;)" class="string">&quot;yyyyMMdd-HHmmss&quot;</span><span class="delimiter">)</span>
+		<a href="#89189" title="java.text.SimpleDateFormat">format</a>.<span title="(x$1: java.util.Date)java.lang.String">format</span><span class="delimiter">(</span><span title="(x$1: Long)java.util.Date" class="keyword">new</span> java.util.<span title="java.util.Date">Date</span><span class="delimiter">(</span><a href="#89004" title="Long">time</a><span class="delimiter">)</span><span class="delimiter">)</span>
+	<span class="delimiter">}</span>
+	<span class="keyword">final</span> <span class="keyword">val</span> <a title="java.lang.String(&quot;-SNAPSHOT&quot;)" id="39846">Snapshot</a> = <span title="java.lang.String(&quot;-SNAPSHOT&quot;)" class="string">&quot;-SNAPSHOT&quot;</span>
+<span class="delimiter">}</span>
+        </pre>
+    </body>
+</html>

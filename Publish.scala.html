@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+			<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html;charset=utf-8" ></meta>
+        <title>Publish.scala</title>
+        <script type="text/javascript" src="jquery-all.js"></script>
+        <script type="text/javascript" src="linked.js"></script>
+        <link rel="stylesheet" type="text/css" href="style.css" title="Style"></link>
+    </head>
+    <body>
+        <pre>
+<span class="keyword">import</span> sbt._
+<span class="keyword">import</span> Keys._
+<span class="keyword">import</span> java.io.File
+
+<span class="keyword">object</span> <a title="object Publish" id="9517">Publish</a> <span title="ScalaObject" class="delimiter">{</span>
+  <span class="keyword">final</span> <span class="keyword">val</span> <a title="java.lang.String(&quot;-SNAPSHOT&quot;)" id="95968">Snapshot</a> = <span title="java.lang.String(&quot;-SNAPSHOT&quot;)" class="string">&quot;-SNAPSHOT&quot;</span>
+
+  <span class="keyword">lazy</span> <span class="keyword">val</span> <a title="Seq[sbt.Project.Setting[_ &gt;: sbt.Task[Seq[sbt.Credentials]] with Option[sbt.Resolver] with scala.xml.NodeSeq with Boolean]]" id="95971">settings</a> = <span title="(elems: sbt.Project.Setting[_ &gt;: sbt.Task[Seq[sbt.Credentials]] with Option[sbt.Resolver] with scala.xml.NodeSeq with Boolean]*)Seq[sbt.Project.Setting[_ &gt;: sbt.Task[Seq[sbt.Credentials]] with Option[sbt.Resolver] with scala.xml.NodeSeq with Boolean]]">Seq</span><span class="delimiter">(</span>
+    <span title="(value: =&gt; Boolean)sbt.Project.Setting[Boolean]">crossPaths</span>  := <span title="Boolean(false)" class="keyword">false</span>,
+    <span title="(value: =&gt; scala.xml.NodeSeq)sbt.Project.Setting[scala.xml.NodeSeq]">pomExtra</span>    := <a href="#95974" title="implicit scala.xml.NodeSeq.seqToNodeSeq : (s: Seq[scala.xml.Node])scala.xml.NodeSeq">akkaPomExtra</a>,
+    <span title="(value: =&gt; Option[sbt.Resolver])sbt.Project.Setting[Option[sbt.Resolver]]">publishTo</span>   := <a href="#95975" title="=&gt; Option[sbt.Resolver]">akkaPublishTo</a>,
+    <span title="(values: =&gt; Seq[sbt.Credentials])sbt.Project.Setting[sbt.Task[Seq[sbt.Credentials]]]">credentials</span> ++= <a href="#95976" title="=&gt; Seq[sbt.Credentials]">akkaCredentials</a>
+  <span class="delimiter">)</span>
+
+  <span class="keyword">lazy</span> <span class="keyword">val</span> <a title="Seq[sbt.Project.Setting[sbt.Types.Id[Seq[sbt.Command]]]]" id="95973">versionSettings</a> = <span title="(elems: sbt.Project.Setting[sbt.Types.Id[Seq[sbt.Command]]]*)Seq[sbt.Project.Setting[sbt.Types.Id[Seq[sbt.Command]]]]">Seq</span><span class="delimiter">(</span>
+    <span title="(value: =&gt; sbt.Command)sbt.Project.Setting[sbt.Types.Id[Seq[sbt.Command]]]">commands</span> += <a href="#95977" title="=&gt; sbt.Command">stampVersion</a>
+  <span class="delimiter">)</span>
+
+  <span class="keyword">def</span> <a title="=&gt; scala.xml.NodeBuffer" id="95974">akkaPomExtra</a> = <span class="delimiter">{</span>
+    &lt;<a title="scala.xml.NodeBuffer" id="97028">inceptionYear</a>&gt;<span title="scala.xml.Text" class="int">2009</span>&lt;/inceptionYear&gt;
+    &lt;<a title="scala.xml.Elem" id="97161">url</a>&gt;<span title="scala.xml.Text">http</span><span class="comment">://akka.io&lt;/url&gt;</span>
+    &lt;<a title="scala.xml.Elem" id="97167">organization</a>&gt;
+      &lt;<a title="scala.xml.Elem" id="97171">name</a>&gt;<span title="scala.xml.Text">Typesafe</span> Inc.&lt;/name&gt;
+      &lt;<a title="scala.xml.Elem" id="97179">url</a>&gt;<span title="scala.xml.Text">http</span><span class="comment">://www.typesafe.com&lt;/url&gt;</span>
+    &lt;/organization&gt;
+    &lt;<a title="scala.xml.Elem" id="97189">licenses</a>&gt;
+      &lt;<a title="scala.xml.Elem" id="97193">license</a>&gt;
+        &lt;<a title="scala.xml.Elem" id="97197">name</a>&gt;<span title="scala.xml.Text">Apache</span> <span class="int">2</span>&lt;/name&gt;
+        &lt;<a title="scala.xml.Elem" id="97205">url</a>&gt;<span title="scala.xml.Text">http</span><span class="comment">://www.apache.org/licenses/LICENSE-2.0.txt&lt;/url&gt;</span>
+        &lt;<a title="scala.xml.Elem" id="97213">distribution</a>&gt;<span title="scala.xml.Text">repo</span>&lt;/distribution&gt;
+      &lt;/license&gt;
+    &lt;/licenses&gt;
+  <span class="delimiter">}</span>
+
+  <span class="keyword">def</span> <a title="=&gt; Option[sbt.Resolver]" id="95975">akkaPublishTo</a>: <span title="Option[sbt.Resolver]">Option</span><span class="delimiter">[</span>Resolver<span class="delimiter">]</span> = <span class="delimiter">{</span>
+    <span class="keyword">val</span> <a title="Option[java.lang.String]" id="125138">property</a> = <span title="(x: java.lang.String)Option[java.lang.String]">Option</span><span class="delimiter">(</span><span title="object java.lang.System">System</span>.<span title="(x$1: java.lang.String)java.lang.String">getProperty</span><span class="delimiter">(</span><span title="java.lang.String(&quot;akka.publish.repository&quot;)" class="string">&quot;akka.publish.repository&quot;</span><span class="delimiter">)</span><span class="delimiter">)</span>
+    <span class="keyword">val</span> <a title="Option[sbt.MavenRepository]" id="125139">repo</a> = <a href="#125138" title="(f: (java.lang.String) =&gt; sbt.MavenRepository)Option[sbt.MavenRepository]">property</a> map <span class="delimiter">{</span> <span title="(location: String)sbt.MavenRepository" class="string">&quot;Akka Publish Repository&quot;</span> at <a href="#125152" title="java.lang.String">_</a> <span class="delimiter">}</span>
+    <span class="keyword">val</span> <a title="java.io.File" id="125140">m2repo</a> = <span title="object sbt.Path">Path</span>.<span title="(component: String)java.io.File">userHome</span> <span title="(component: String)java.io.File">/</span> <span title="java.lang.String(&quot;.m2&quot;)" class="string">&quot;.m2&quot;</span> /<span title="java.lang.String(&quot;repository&quot;)" class="string">&quot;repository&quot;</span>
+    <a href="#125139" title="(alternative: =&gt; Option[Product with sbt.Resolver])Option[Product with sbt.Resolver]">repo</a> orElse <span title="(x: sbt.FileRepository)Some[sbt.FileRepository]">Some</span><span class="delimiter">(</span><span title="object sbt.Resolver">Resolver</span>.<span title="(name: String,baseDirectory: java.io.File)(implicit basePatterns: sbt.Patterns)sbt.FileRepository">file</span><span title="=&gt; sbt.Patterns" class="delimiter">(</span><span title="java.lang.String(&quot;Local Maven Repository&quot;)" class="string">&quot;Local Maven Repository&quot;</span>, <a href="#125140" title="java.io.File">m2repo</a><span class="delimiter">)</span><span class="delimiter">)</span>
+  <span class="delimiter">}</span>
+
+  <span class="keyword">def</span> <a title="=&gt; Seq[sbt.Credentials]" id="95976">akkaCredentials</a>: <span title="Seq[sbt.Credentials]">Seq</span><span class="delimiter">[</span>Credentials<span class="delimiter">]</span> = <span class="delimiter">{</span>
+    <span class="keyword">val</span> <a title="Option[java.lang.String]" id="125381">property</a> = <span title="(x: java.lang.String)Option[java.lang.String]">Option</span><span class="delimiter">(</span><span title="object java.lang.System">System</span>.<span title="(x$1: java.lang.String)java.lang.String">getProperty</span><span class="delimiter">(</span><span title="java.lang.String(&quot;akka.publish.credentials&quot;)" class="string">&quot;akka.publish.credentials&quot;</span><span class="delimiter">)</span><span class="delimiter">)</span>
+    <a href="#125381" title="(f: (java.lang.String) =&gt; sbt.Credentials)Option[sbt.Credentials]">property</a> <span title="(xo: Option[sbt.Credentials])Iterable[sbt.Credentials]">map</span> <span class="delimiter">(</span><a title="java.lang.String" id="125393">f</a> =&gt; <span title="(file: java.io.File)sbt.Credentials">Credentials</span><span class="delimiter">(</span><span title="java.io.File" class="keyword">new</span> <span title="java.io.File">File</span><span class="delimiter">(</span><a href="#125393" title="java.lang.String">f</a><span class="delimiter">)</span><span class="delimiter">)</span><span class="delimiter">)</span> <span title="=&gt; Seq[sbt.Credentials]">toSeq</span>
+  <span class="delimiter">}</span>
+
+  <span class="keyword">def</span> <a title="=&gt; sbt.Command" id="95977">stampVersion</a> = <span title="object sbt.Command">Command</span>.<span title="(name: String)(f: (sbt.State) =&gt; sbt.State)sbt.Command">command</span><span class="delimiter">(</span><span title="java.lang.String(&quot;stamp-version&quot;)" class="string">&quot;stamp-version&quot;</span><span class="delimiter">)</span> <span class="delimiter">{</span> <a title="sbt.State" id="96059">state</a> =&gt;
+    <a href="#95978" title="(settings: Seq[sbt.package.Setting[_]],state: sbt.State)sbt.State">append</a><span class="delimiter">(</span><span class="delimiter">(</span><span title="(p: sbt.Reference)sbt.ScopedSetting[String]">version</span> <span title="(f: (String) =&gt; String)sbt.Project.Setting[String]">in</span> <span title="object sbt.ThisBuild">ThisBuild</span> ~= <a href="#95979" title="(version: String)String">stamp</a><span class="delimiter">)</span> <a href="#96065" title="sbt.Project.Setting[String]">::</a> <span title="(x: sbt.Project.Setting[String])List[sbt.Project.Setting[String]]">Nil</span>, <a href="#96059" title="sbt.State">state</a><span class="delimiter">)</span>
+  <span class="delimiter">}</span>
+
+  <span class="comment">// TODO: replace with extracted.append when updated to sbt 0.10.1</span>
+  <span class="keyword">def</span> <a title="(settings: Seq[sbt.package.Setting[_]],state: sbt.State)sbt.State" id="95978">append</a><span class="delimiter">(</span><a title="Seq[sbt.package.Setting[_]]" id="96060">settings</a>: <span title="Seq[sbt.package.Setting[_]]">Seq</span><span class="delimiter">[</span>Setting<span class="delimiter">[</span>_<span class="delimiter">]</span><span class="delimiter">]</span>, <a title="sbt.State" id="96061">state</a>: <span title="sbt.State">State</span><span class="delimiter">)</span>: <span title="sbt.State">State</span> = <span class="delimiter">{</span>
+    <span class="keyword">val</span> <a title="sbt.Extracted" id="125509">extracted</a> = <span title="object sbt.Project">Project</span>.<span title="(state: sbt.State)sbt.Extracted">extract</span><span class="delimiter">(</span><a href="#96061" title="sbt.State">state</a><span class="delimiter">)</span>
+    <span class="keyword">import</span> <a href="#125509" title="sbt.Extracted">extracted</a>._
+    <span class="keyword">val</span> <a title="Seq[sbt.Project.Setting[_]]" id="125511">append</a> = <span title="object sbt.Load">Load</span>.<span title="(thisScope: sbt.Scope,uri: java.net.URI,rootProject: (java.net.URI) =&gt; String,settings: Seq[sbt.Project.Setting[_]])Seq[sbt.Project.Setting[_]]">transformSettings</span><span class="delimiter">(</span><span title="object sbt.Load">Load</span>.<span title="(project: sbt.Reference)sbt.Scope">projectScope</span><span class="delimiter">(</span><a href="#125509" title="=&gt; sbt.ProjectRef">currentRef</a><span class="delimiter">)</span>, <a href="#125509" title="=&gt; sbt.ProjectRef">currentRef</a>.<span title="=&gt; java.net.URI">build</span>, <a href="#125509" title="=&gt; (java.net.URI) =&gt; String">rootProject</a>, <a href="#96060" title="Seq[sbt.package.Setting[_]]">settings</a><span class="delimiter">)</span>
+    <span class="keyword">val</span> <a title="sbt.Load.BuildStructure" id="125512">newStructure</a> = <span title="object sbt.Load">Load</span>.<span title="(newSettings: Seq[sbt.Project.Setting[_]],structure: sbt.Load.BuildStructure)sbt.Load.BuildStructure">reapply</span><span class="delimiter">(</span><a href="#125509" title="=&gt; sbt.SessionSettings">session</a>.<span title="(that: scala.collection.TraversableOnce[sbt.Project.Setting[_]])(implicit bf: scala.collection.generic.CanBuildFrom[Seq[sbt.Project.Setting[_]],sbt.Project.Setting[_],Seq[sbt.Project.Setting[_]]])Seq[sbt.Project.Setting[_]]">original</span> <span title="scala.collection.generic.CanBuildFrom[scala.collection.Seq.Coll,sbt.Project.Setting[_],Seq[sbt.Project.Setting[_]]]">++</span> <a href="#125511" title="Seq[sbt.Project.Setting[_]]">append</a>, <a href="#125509" title="=&gt; sbt.Load.BuildStructure">structure</a><span class="delimiter">)</span>
+    <span title="object sbt.Project">Project</span>.<span title="(session: sbt.SessionSettings,structure: sbt.Load.BuildStructure,s: sbt.State)sbt.State">setProject</span><span class="delimiter">(</span><a href="#125509" title="=&gt; sbt.SessionSettings">session</a>, <a href="#125512" title="sbt.Load.BuildStructure">newStructure</a>, <a href="#96061" title="sbt.State">state</a><span class="delimiter">)</span>
+  <span class="delimiter">}</span>
+
+  <span class="keyword">def</span> <a title="(version: String)String" id="95979">stamp</a><span class="delimiter">(</span><a title="String" id="96227">version</a>: <span title="String">String</span><span class="delimiter">)</span>: <span title="String">String</span> = <span class="delimiter">{</span>
+    <span title="String" class="keyword">if</span> <span class="delimiter">(</span><a href="#96227" title="(x$1: java.lang.String)Boolean">version</a> endsWith <a href="#95968" title="=&gt; java.lang.String(&quot;-SNAPSHOT&quot;)">Snapshot</a><span class="delimiter">)</span> <span title="(x$1: Any)java.lang.String" class="delimiter">(</span><a href="#96227" title="(suffix: String)java.lang.String">version</a> stripSuffix <a href="#95968" title="=&gt; java.lang.String(&quot;-SNAPSHOT&quot;)">Snapshot</a><span class="delimiter">)</span> <span title="(x$1: Any)java.lang.String">+</span> <span title="java.lang.String(&quot;-&quot;)" class="string">&quot;-&quot;</span> + <a href="#95980" title="(time: Long)String">timestamp</a><span class="delimiter">(</span><span title="object java.lang.System">System</span>.<span title="()Long">currentTimeMillis</span><span class="delimiter">)</span>
+    <span class="keyword">else</span> <a href="#96227" title="String">version</a>
+  <span class="delimiter">}</span>
+
+  <span class="keyword">def</span> <a title="(time: Long)String" id="95980">timestamp</a><span class="delimiter">(</span><a title="Long" id="125784">time</a>: <span title="Long">Long</span><span class="delimiter">)</span>: <span title="String">String</span> = <span class="delimiter">{</span>
+    <span class="keyword">val</span> <a title="java.text.SimpleDateFormat" id="125789">format</a> = <span title="(x$1: java.lang.String)java.text.SimpleDateFormat" class="keyword">new</span> java.text.<span title="java.text.SimpleDateFormat">SimpleDateFormat</span><span class="delimiter">(</span><span title="java.lang.String(&quot;yyyyMMdd-HHmmss&quot;)" class="string">&quot;yyyyMMdd-HHmmss&quot;</span><span class="delimiter">)</span>
+    <a href="#125789" title="java.text.SimpleDateFormat">format</a>.<span title="(x$1: java.util.Date)java.lang.String">format</span><span class="delimiter">(</span><span title="(x$1: Long)java.util.Date" class="keyword">new</span> java.util.<span title="java.util.Date">Date</span><span class="delimiter">(</span><a href="#125784" title="Long">time</a><span class="delimiter">)</span><span class="delimiter">)</span>
+  <span class="delimiter">}</span>
+<span class="delimiter">}</span>
+
+        </pre>
+    </body>
+</html>
