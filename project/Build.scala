@@ -29,6 +29,11 @@ object ProjectDefFiles{
       ),
       "0.10"
     )
+   ,ProjectDefFile(
+      "jboner",
+      "akka",
+      Seq("AkkaBuild.scala","Publish.scala","Unidoc.scala")
+    )
   )
 }
 
@@ -38,9 +43,14 @@ object ScalaKaigi extends Build{
     "root",
     file("."),
     settings = Defaults.defaultSettings ++ Seq(
-      libraryDependencies ++= Seq(
+      resolvers ++= Seq(
+        "Typesafe Repo" at "http://repo.typesafe.com/typesafe/releases/"
+      ) 
+     ,libraryDependencies ++= Seq(
         "org.scala-tools.sbt" %% "sbt" % "0.10.1"
        ,"net.databinder" %% "dispatch-http" % "0.8.3"
+       ,"com.typesafe.sbt-multi-jvm" %% "sbt-multi-jvm" % "0.1.4"
+       ,"com.typesafe.sbt-scalariform" %% "sbt-scalariform" % "0.1.2"
       ),
       addCompilerPlugin("org.scala-tools.sxr" %% "sxr" % "0.2.7")
      ,(sourceGenerators in Compile) <+= (sourceManaged in Compile) map{
