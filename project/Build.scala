@@ -5,14 +5,22 @@ case class ProjectDefFile(
   user:String,
   projectName:String,
   sourceList:Seq[String], 
-  tree:String = "master"
+  tree:String = "master",
+  addHeader:Boolean = true
 ){
 
   def sourceURL(sourceName:String) =
     Seq("https://raw.github.com",user,projectName,tree,"project",sourceName).mkString("/")
 
-  def rawSourceList:Seq[(String,String)] = sourceList.map{ s =>
-    s -> scala.io.Source.fromURL(sourceURL(s)).mkString
+  def rawSourceList:Seq[(String,String)] = sourceList.map{ l =>
+    ( 
+      l ->
+      {{if(addHeader)
+        "package " + user + "." + projectName + ";\n"
+      else ""} + 
+      scala.io.Source.fromURL(sourceURL(l)).mkString
+      }
+    )
   }
 
 }
@@ -33,11 +41,17 @@ object ProjectDefFiles{
       "jboner",
       "akka",
       Seq("AkkaBuild.scala","Publish.scala","Unidoc.scala")
+      ,addHeader = false
     )
    ,ProjectDefFile(
       "n8han",
       "Unfiltered",
       Seq("build.scala")
+    )
+   ,ProjectDefFile(
+      "mongodb",
+      "casbah",
+      Seq("CasbahBuild.scala")
     )
   )
 }
@@ -64,7 +78,7 @@ object ScalaKaigi extends Build{
           p.rawSourceList.map{case (name,str) =>
             IO.createDirectory(dir / p.user / p.projectName ) 
             val f = ( dir / p.user / p.projectName / name ).asFile
-            IO.write(f,str)
+            IO.write(f,  str)
             f
           }
         }
